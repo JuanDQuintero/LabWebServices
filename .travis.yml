@@ -1,0 +1,27 @@
+language: java
+jdk:
+- oraclejdk9
+services:
+- mysql
+dist: trusty
+sudo: required
+addons:
+apt:
+packages:
+- mysql-server-5.6
+- mysql-client-core-5.6
+- mysql-client-5.6
+before_script:
+- mysql -u root -e 'CREATE DATABASE human;'
+- mysql -u root -e "CREATE USER 'sa'@'localhost' IDENTIFIED BY 'sa';"
+- mysql -u root -e "GRANT ALL ON human.* TO 'sa'@'localhost';"
+before_install:
+- chmod +x mvnw
+script: mvn package -Dmaven.test.skip=true 
+deploy:
+ skip_cleanup: true
+ provider: heroku
+ api_key:
+    secure: 3b66b76b-d116-4dbd-ab6c-1c0639081361
+ app: back-spring
+

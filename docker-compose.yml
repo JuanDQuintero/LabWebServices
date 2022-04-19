@@ -1,0 +1,46 @@
+
+
+version: '3'
+
+services:
+  database3:
+    image: mysql
+    container_name: database3
+    environment:
+      
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lab7
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    ports:
+      - 3306:3306
+    volumes:
+      - db_exampleData:/var/lib/mysql
+
+  springapi3:
+    environment: 
+      DB_SERVER: database3
+    build: ./ 
+    container_name: springapi3
+    ports:
+      - 8089:8089
+    depends_on:
+      - database3
+    volumes:
+      - ./target/lab7Back.jar:/lab7Back.jar
+    command: ["java", "-jar", "lab7Back.jar"]
+
+    links:
+      - database3
+
+  angular3:
+        build: "../CRUDFrontAngular"
+        container_name: angular3
+        ports:
+          - 4200:80
+        depends_on:
+          - springapi3
+        links: 
+          - springapi3
+volumes:
+  db_exampleData:
